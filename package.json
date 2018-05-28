@@ -1,6 +1,6 @@
 {
   "name": "language-fagan-bros",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Syntax highlighting for Fagan Bro Script",
   "keywords": [
     "language",
