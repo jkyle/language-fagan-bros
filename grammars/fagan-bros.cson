@@ -1,0 +1,175 @@
+# If this is your first time writing a language grammar, check out:
+#   - https://flight-manual.atom.io/hacking-atom/sections/creating-a-grammar/
+
+'scopeName': 'source.fbs'
+'name': 'Fagan Bros Script'
+'fileTypes': [
+  'fbs'
+]
+'foldingStartMarker': '^[A-Z]+ >>'
+'foldingStopMarker': '\\\n(\\\n)+'
+'patterns': [
+  {
+    'include': '#gameObj'
+  }
+  {
+    'include': '#blockStart'
+  }
+  {
+    'include': '#strings'
+  }
+  {
+    'include': '#number'
+  }
+  {
+    'include': '#operators'
+  }
+  {
+    'include': '#comparators'
+  }
+  {
+    'include': '#boolean'
+  }
+  {
+    'include': '#control'
+  }
+  {
+    'include': '#fileStart'
+  }
+  {
+    'include': '#keywords'
+  }
+  {
+    'include': '#line_comments'
+  }
+]
+'repository':
+  'fileStart':
+    'match': '^@[A-Z ]+'
+    'name': 'entity.name.tag'
+  'blockStart':
+    'match': '^[A-Z]+ >>'
+    'name': 'entity.name.function'
+  'strings':
+    'patterns': [
+      {
+        'begin': '"'
+        'beginCaptures': '0': 'name': 'punctuation.definition.string.begin.js'
+        'end': '"'
+        'endCaptures': '0': 'name': 'punctuation.definition.string.end.js'
+        'name': 'string.quoted.double.js'
+        'patterns': [
+          {
+            'include': '#string_escapes'
+          }
+          {
+            'match': '[^"]*$'
+            'name': 'invalid.illegal.string.js'
+          }
+        ]
+      },
+      {
+        'begin': '\\(\\('
+        'beginCaptures': '0': 'name': 'punctuation.definition.string.begin.js'
+        'end': '\\)\\)'
+        'endCaptures': '0': 'name': 'punctuation.definition.string.end.js'
+        'name': 'markup.raw'
+        'patterns': [
+          {
+            'include': '#string_conditional_start'
+          }
+          {
+            'include': '#string_conditional_else'
+          }
+          {
+            'include': '#string_conditional_end'
+          }
+        ]
+      }
+    ]
+  'string_escapes':
+    'patterns': [
+      {
+        'match': '\\\\u(?![A-Fa-f0-9]{4}|{[A-Fa-f0-9]+})[^\'"]*'
+        'name': 'invalid.illegal.unicode-escape.js'
+      }
+      {
+        'match': '\\\\u(?:[A-Fa-f0-9]{4})'
+        'name': 'constant.character.escape.js'
+      }
+      {
+        'match': '\\\\["\'\\\\/bfnrt]'
+        'name': 'constant.character.escape.js'
+      }
+    ]
+  'string_conditional_start':
+    'begin': '{(\\?|@)'
+    'beginCaptures':
+      {
+        '0': 'name': 'punctuation.definition.character-class.regexp'
+        '1': 'name': 'keyword.control'
+      }
+    'end': '}'
+    'endCaptures': '0': 'name': 'punctuation.definition.character-class.regexp'
+    'patterns': [
+      {
+        'include': '#gameObj'
+      }
+      {
+        'include': '#comparators'
+      }
+      {
+        'include': '#boolean'
+      }
+      {
+        'include': '#strings'
+      }
+      {
+        'include': '#number'
+      }
+    ]
+  'string_conditional_end':
+    'match': '{(x)}'
+    'captures': '1': 'name': 'keyword.control'
+    'name': 'punctuation.definition.character-class.regexp'
+  'string_conditional_else':
+    'match': '{(~)}'
+    'captures': '1': 'name': 'keyword.control'
+    'name': 'punctuation.definition.character-class.regexp'
+  'gameObj':
+    'match': '[A-Z]+((\\.)([a-zA-Z]+))+'
+    'captures': {
+        '2': 'name': 'keyword.operator.accessor'
+        '3': 'name': 'entity.other.attribute-name'
+      }
+    'name': 'variable.other'
+  'number':
+    'match': '[0-9]+'
+    'name': 'constant.numeric'
+  'comparators':
+    'match': '(<=|<|>=|>|===|==|=|!==|!=|\bis\b|\bhas\b|\bnot\b|\blacks\b)'
+    'name': 'keyword.operator'
+  'keywords':
+    'match': '(\\$INVENTORY|\\$LOCATION|\\$THIS)'
+    'name': 'constant.language'
+  'operators':
+    'match': '(<\\-|add|remove)'
+    'name': 'keyword.operator'
+  'boolean':
+    'match': '(false|true)'
+    'name': 'constant.language'
+  'control':
+    'match': '^([ \\t]+)?(\\?|\\-|x|~)'
+    'name': 'keyword.control'
+  'line_comments':
+    'begin': '(^[ \\t]+)?(?=\\#)'
+    'beginCaptures': '1': 'name': 'punctuation.whitespace.comment.leading.js'
+    'end': '(?!\\G)'
+    'patterns': [
+      {
+        'begin': '#'
+        'beginCaptures': '0': 'name': 'punctuation.definition.comment.js'
+        'end': '\\n'
+        'name': 'comment.line.double-slash.js'
+      }
+]
